@@ -1,4 +1,4 @@
-export interface TidesData {
+export interface SeaLevelData {
   data: SeaLevelDatum[];
   meta: Meta;
 }

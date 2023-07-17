@@ -7,10 +7,15 @@ on:
     branches: ["main"]
 
   schedule:
-    - cron: "3 7,14,21 * * *"
+    - cron: "23 7,19 * * *"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      refetch-data:
+        description: "Fetch updated data before build (true/false)"
+        required: false
+        default: "false"
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -35,6 +40,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - env:
+          EVENT_CONTEXT: ${{ toJSON(github.event_name) }}
+        run: |
+          echo $EVENT_CONTEXT
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%dT%H:%M')" >> $GITHUB_OUTPUT
+
+      - name: Cache API data
+        uses: actions/cache@v3
+        with:
+          path: data/
+          key: ${{ runner.os }}-api-data-${{ steps.date.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-api-data-
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
 
@@ -49,6 +71,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          STORMGLASS_API_KEY: ${{ secrets.STORMGLASS_API_KEY }}
+          REFETCH_DATA: ${{ github.event_name == 'schedule' || github.event.inputs.refetch-data == 'true' }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2

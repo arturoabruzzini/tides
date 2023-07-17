@@ -1,19 +1,18 @@
 import { Canvas, CanvasRenderingContext2D } from "canvas";
 import { drawCircle, drawNowLine } from "./canvasUtils";
-import { addHoursToDate, timeOffset, getData } from "../utils/getData";
+import { FilteredData } from "../utils/getData";
 import { drawNightTime } from "./drawNightTime";
 import { drawMoonArc, drawMoonPhase } from "./drawMoon";
 import { drawClockNumbers } from "./drawClockNumbers";
-import { drawTides } from "./drawTides";
-import { drawHand } from "./drawHand";
 import { drawSeaLevel } from "./drawSeaLevel";
 import { drawWeather } from "./drawWeather";
 
-export const draw = (canvas: Canvas, ctx: CanvasRenderingContext2D) => {
-  const now = addHoursToDate(new Date(), timeOffset);
-  console.log("🚀 ~ file: draw.ts:14 ~ draw ~ now:", now);
-  const { weather, tides, seaLevel, astronomical } = getData();
-
+export const draw = async (
+  canvas: Canvas,
+  ctx: CanvasRenderingContext2D,
+  { weather, tides, seaLevel, astronomical }: FilteredData,
+  now: Date
+) => {
   //background
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
