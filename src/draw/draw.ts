@@ -7,7 +7,7 @@ import { drawClockNumbers } from "./drawClockNumbers";
 import { drawSeaLevel } from "./drawSeaLevel";
 import { drawWeather } from "./drawWeather";
 
-export const draw = async (
+export const draw = (
   canvas: Canvas,
   ctx: CanvasRenderingContext2D,
   { weather, tides, seaLevel, astronomical }: FilteredData,

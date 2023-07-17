@@ -20,7 +20,7 @@ export interface FilteredData {
 }
 
 const isDateBetween = (date: Date, earliest: Date, latest: Date) =>
-  earliest < date && date < latest;
+  earliest <= date && date < latest;
 
 export const addHoursToDate = (date: Date, hours: number) =>
   new Date(date.getTime() + hours * 60 * 60 * 1000);
@@ -37,7 +37,9 @@ export const filterData = (
     isDateBetween(new Date(h.time), now, in24Hours)
   );
   if (weather.length !== 24) {
-    throw new Error("can't find the next 24 hours of weather");
+    throw new Error(
+      `can't find the next 24 hours of weather, only got ${weather.length}`
+    );
   }
 
   // for tides get the last one and the next few until tomorrow
@@ -65,7 +67,9 @@ export const filterData = (
     seaLevelIndexOfLast + 1
   );
   if (seaLevel.length !== 26) {
-    throw new Error("can't find the next 24 hours of sea level");
+    throw new Error(
+      `can't find the 26 hours of sea level, only got ${seaLevel.length}`
+    );
   }
 
   // for astronomical get today's entry
@@ -169,11 +173,5 @@ export const getData = async (): Promise<RawData> => {
   if (process.env.REFETCH_DATA === "true") {
     await fetchData();
   }
-  try {
-    return getDataFromCache();
-  } catch (e) {
-    // if it errors, might have run out of data, refetch and try once more
-    await fetchData();
-    return getDataFromCache();
-  }
+  return getDataFromCache();
 };
