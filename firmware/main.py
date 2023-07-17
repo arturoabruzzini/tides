@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+# From https://github.com/pimoroni/pimoroni-pico/tree/main/micropython/examples/inky_frame/inkylauncher
+
 import gc
 import time
 from machine import reset
