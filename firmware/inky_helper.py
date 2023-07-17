@@ -7,6 +7,7 @@ import inky_frame
 import json
 import network
 import os
+import ntptime
 
 # Pin setup for VSYS_HOLD needed to sleep and wake.
 HOLD_VSYS_EN_PIN = 2
@@ -40,7 +41,8 @@ network_led_pulse_speed_hz = 1
 
 def network_led_callback(t):
     # updates the network led brightness based on a sinusoid seeded by the current time
-    brightness = (math.sin(time.ticks_ms() * math.pi * 2 / (1000 / network_led_pulse_speed_hz)) * 40) + 60
+    brightness = (math.sin(time.ticks_ms() * math.pi * 2 /
+                  (1000 / network_led_pulse_speed_hz)) * 40) + 60
     value = int(pow(brightness / 100.0, 2.8) * 65535.0 + 0.5)
     network_led_pwm.duty_u16(value)
 
@@ -50,7 +52,8 @@ def pulse_network_led(speed_hz=1):
     global network_led_timer, network_led_pulse_speed_hz
     network_led_pulse_speed_hz = speed_hz
     network_led_timer.deinit()
-    network_led_timer.init(period=50, mode=Timer.PERIODIC, callback=network_led_callback)
+    network_led_timer.init(period=50, mode=Timer.PERIODIC,
+                           callback=network_led_callback)
 
 
 # turn off the network led and disable any pulsing animation that's running
@@ -110,6 +113,15 @@ def network_connect(SSID, PSK):
     if wlan.status() != 3:
         stop_network_led()
         led_warn.on()
+
+    print("Connected to WIFI")
+
+    # grab the current time from the ntp server and update the Pico RTC
+    try:
+        ntptime.settime()
+        print("Time set")
+    except OSError:
+        print("Unable to contact NTP server")
 
 
 state = {"run": None}
