@@ -1,3 +1,27 @@
+"""
+MIT License
+
+Copyright (c) 2021 Pimoroni Ltd
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 from urllib import urequest
 import gc
 import qrcode
@@ -101,14 +125,16 @@ def draw_qr_code(ox, oy, size, code):
     for x in range(size):
         for y in range(size):
             if code.get_module(x, y):
-                graphics.rectangle(ox + x * module_size, oy + y * module_size, module_size, module_size)
+                graphics.rectangle(ox + x * module_size, oy +
+                                   y * module_size, module_size, module_size)
 
 
 # A function to get the data from an RSS Feed, this in case BBC News.
 def get_rss():
     try:
         stream = urequest.urlopen(URL)
-        output = list(parse_xml_stream(stream, [b"title", b"description", b"guid", b"pubDate"], b"item"))
+        output = list(parse_xml_stream(
+            stream, [b"title", b"description", b"guid", b"pubDate"], b"item"))
         return output
 
     except OSError as e:
@@ -144,12 +170,16 @@ def draw():
         graphics.text("Headlines from BBC News:", 10, 10, 320, 3)
 
         graphics.set_pen(4)
-        graphics.text(feed[0]["title"], 10, 70, WIDTH - 150, 3 if graphics.measure_text(feed[0]["title"]) < WIDTH else 2)
-        graphics.text(feed[1]["title"], 130, 260, WIDTH - 140, 3 if graphics.measure_text(feed[1]["title"]) < WIDTH else 2)
+        graphics.text(feed[0]["title"], 10, 70, WIDTH - 150,
+                      3 if graphics.measure_text(feed[0]["title"]) < WIDTH else 2)
+        graphics.text(feed[1]["title"], 130, 260, WIDTH - 140,
+                      3 if graphics.measure_text(feed[1]["title"]) < WIDTH else 2)
 
         graphics.set_pen(3)
-        graphics.text(feed[0]["description"], 10, 135 if graphics.measure_text(feed[0]["title"]) < 650 else 90, WIDTH - 150, 2)
-        graphics.text(feed[1]["description"], 130, 320 if graphics.measure_text(feed[1]["title"]) < 650 else 230, WIDTH - 145, 2)
+        graphics.text(feed[0]["description"], 10, 135 if graphics.measure_text(
+            feed[0]["title"]) < 650 else 90, WIDTH - 150, 2)
+        graphics.text(feed[1]["description"], 130, 320 if graphics.measure_text(
+            feed[1]["title"]) < 650 else 230, WIDTH - 145, 2)
 
         graphics.line(10, 215, WIDTH - 10, 215)
 
@@ -165,7 +195,9 @@ def draw():
         graphics.set_pen(4)
         graphics.rectangle(0, (HEIGHT // 2) - 20, WIDTH, 40)
         graphics.set_pen(1)
-        graphics.text("Unable to display news feed!", 5, (HEIGHT // 2) - 15, WIDTH, 2)
-        graphics.text("Check your network settings in secrets.py", 5, (HEIGHT // 2) + 2, WIDTH, 2)
+        graphics.text("Unable to display news feed!",
+                      5, (HEIGHT // 2) - 15, WIDTH, 2)
+        graphics.text("Check your network settings in secrets.py",
+                      5, (HEIGHT // 2) + 2, WIDTH, 2)
 
     graphics.update()
