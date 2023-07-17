@@ -13,6 +13,10 @@ const createTideImages = async () => {
   const data = await getData();
 
   const now = addHoursToDate(new Date(), timeOffset);
+  console.log(
+    "🚀 ~ file: index.ts:16 ~ createTideImages ~ now:",
+    now.getHours()
+  );
   // loop through the hours
   const filteredData = filterData(data, now);
 

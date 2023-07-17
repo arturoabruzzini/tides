@@ -72,6 +72,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
+          TZ: "Europe/London"
           STORMGLASS_API_KEY: ${{ secrets.STORMGLASS_API_KEY }}
           REFETCH_DATA: ${{ github.event_name == 'schedule' || github.event.inputs.refetch-data == 'true' }}
 
