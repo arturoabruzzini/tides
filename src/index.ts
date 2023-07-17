@@ -8,7 +8,11 @@ const createTideImages = () => {
 
   draw(canvas, ctx);
 
-  fs.writeFileSync("image.jpg", canvas.toBuffer("image/jpeg"));
+  if (!fs.existsSync("build")) {
+    fs.mkdirSync("build");
+  }
+
+  fs.writeFileSync("build/image.jpg", canvas.toBuffer("image/jpeg"));
 };
 
 createTideImages();
