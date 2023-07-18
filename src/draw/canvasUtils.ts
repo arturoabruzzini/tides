@@ -10,12 +10,8 @@ export type Coords = [number, number];
 export enum Colours {
   BLACK = "#000000",
   WHITE = "#ffffff",
-  GREY = "#808080",
   GREEN = "#00ff00",
-  LIGHT_BLUE = "#00ffff",
   BLUE = "#0000ff",
-  DARK_BLUE = "#000080",
-  DARKEST_BLUE = "#000040",
   RED = "#ff0000",
   YELLOW = "#ffff00",
   ORANGE = "#ff8000",
@@ -79,3 +75,37 @@ export const polarToCartesian = (radius: number, angle: number): Coords => [
   radius * Math.cos(Math.PI / 2 - angle),
   -radius * Math.sin(Math.PI / 2 - angle),
 ];
+
+const getRadius = (size: number, percent: number) => {
+  const area = (size * size * percent) / 100;
+  return Math.sqrt(area / Math.PI);
+};
+
+const getHalfToneSize = (size: number, percent: number) => {
+  const area = (size * size * percent) / 100;
+  return Math.sqrt(area);
+};
+
+// http://anderoonies.github.io/projects/halftone/
+export const fillHalfTone = (
+  ctx: CanvasRenderingContext2D,
+  shadingPercent: number,
+  spacing: number = 5
+) => {
+  for (
+    let x = (spacing - ctx.canvas.width) / 2;
+    x < ctx.canvas.width / 2;
+    x += spacing
+  ) {
+    for (
+      let y = (spacing - ctx.canvas.height) / 2;
+      y < ctx.canvas.height / 2;
+      y += spacing
+    ) {
+      ctx.beginPath();
+      const size = getHalfToneSize(spacing, shadingPercent);
+      ctx.rect(x, y, size, size);
+      ctx.fill();
+    }
+  }
+};
