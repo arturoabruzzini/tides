@@ -2,6 +2,7 @@ import { CanvasRenderingContext2D } from "canvas";
 import { WeatherHour } from "../types/weather";
 import { drawPolarCurve } from "./drawCurve";
 import {
+  Colours,
   getRelativeAngleFromTime,
   point,
   polarToCartesian,
@@ -78,12 +79,21 @@ export const drawWeather = (
   // below 0: ski suit
 
   // clouds: show cloud cover for each hour
-  drawClouds(ctx, radius, now, weather);
+  // drawClouds(ctx, radius, now, weather);
 
   // precipitation: rain icons for each hour
 
   // waveHeight: curve?
-  drawPolarCurve(ctx, radius, now, weather, "waveHeight.sg", 0, 4, "green");
+  drawPolarCurve(
+    ctx,
+    radius,
+    now,
+    weather,
+    "waveHeight.sg",
+    0,
+    4,
+    Colours.GREEN
+  );
 
   // windDirection: compass arrow
 

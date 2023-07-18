@@ -71,9 +71,8 @@ const createTideImages = async () => {
 
     const fileName = `build/${timeString}.jpg`;
     fs.writeFileSync(fileName, canvas.toBuffer("image/jpeg"));
-
-    console.log("Saved", fileName);
   });
+  console.log("Saved 24 files");
 };
 
 createTideImages();

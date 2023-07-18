@@ -10,19 +10,22 @@ export type Coords = [number, number];
 export enum Colours {
   BLACK = "#000000",
   WHITE = "#ffffff",
+  GREY = "#808080",
   GREEN = "#00ff00",
+  LIGHT_BLUE = "#00ffff",
   BLUE = "#0000ff",
+  DARK_BLUE = "#000080",
+  DARKEST_BLUE = "#000040",
   RED = "#ff0000",
   YELLOW = "#ffff00",
   ORANGE = "#ff8000",
-  TAUPE = "#dcb4c8",
 }
 
 export const drawCircle = (
   ctx: CanvasRenderingContext2D,
   radius: number,
   position: Coords = [0, 0],
-  colour: string = "white",
+  colour: Colours = Colours.WHITE,
   fill: "fill" | "stroke" = "fill"
 ) => {
   ctx.beginPath();
@@ -36,7 +39,7 @@ export const drawRectangle = (
   width: number,
   height: number,
   position: Coords = [0, 0],
-  colour: string = "white",
+  colour: Colours = Colours.WHITE,
   fill: "fill" | "stroke" = "fill"
 ) => {
   ctx.beginPath();
@@ -48,7 +51,7 @@ export const drawRectangle = (
 export const drawNowLine = (ctx: CanvasRenderingContext2D, radius: number) => {
   ctx.beginPath();
   ctx.lineWidth = 2;
-  ctx.strokeStyle = "black";
+  ctx.strokeStyle = Colours.BLACK;
   ctx.lineCap = "butt";
   ctx.moveTo(0, 0);
   ctx.lineTo(0, -radius);
@@ -58,7 +61,7 @@ export const drawNowLine = (ctx: CanvasRenderingContext2D, radius: number) => {
 export const point = (
   ctx: CanvasRenderingContext2D,
   position: Coords,
-  colour: string = "red"
+  colour: Colours = Colours.RED
 ) => drawCircle(ctx, 5, position, colour);
 
 export const getAngleFromTime = (time: Date) =>

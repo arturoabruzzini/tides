@@ -1,5 +1,5 @@
 import { CanvasRenderingContext2D } from "canvas";
-import { getRelativeAngleFromTime } from "./canvasUtils";
+import { Colours, getRelativeAngleFromTime } from "./canvasUtils";
 import { AstronomicalDatum } from "../types/astronomical";
 
 const fillPizzaSlice = (
@@ -7,7 +7,7 @@ const fillPizzaSlice = (
   radius: number,
   angle1: number,
   angle2: number,
-  colour: string
+  colour: Colours
 ) => {
   ctx.beginPath();
   ctx.moveTo(0, 0);
@@ -43,11 +43,17 @@ export const drawNightTime = (
     getRelativeAngleFromTime(new Date(astronomical.civilDawn), now);
   const sunrise = getRelativeAngleFromTime(new Date(astronomical.sunrise), now);
 
-  fillPizzaSlice(ctx, radius, sunset, sunrise, "#96bbc9");
+  fillPizzaSlice(ctx, radius, sunset, sunrise, Colours.LIGHT_BLUE);
   if (civilDusk && civilDawn)
-    fillPizzaSlice(ctx, radius, civilDusk, civilDawn, "#6f8f9a");
+    fillPizzaSlice(ctx, radius, civilDusk, civilDawn, Colours.BLUE);
   if (nauticalDusk && nauticalDawn)
-    fillPizzaSlice(ctx, radius, nauticalDusk, nauticalDawn, "#586a70");
+    fillPizzaSlice(ctx, radius, nauticalDusk, nauticalDawn, Colours.DARK_BLUE);
   if (astronomicalDusk && astronomicalDawn)
-    fillPizzaSlice(ctx, radius, astronomicalDusk, astronomicalDawn, "#2f454d");
+    fillPizzaSlice(
+      ctx,
+      radius,
+      astronomicalDusk,
+      astronomicalDawn,
+      Colours.DARKEST_BLUE
+    );
 };

@@ -1,5 +1,10 @@
 import { CanvasRenderingContext2D } from "canvas";
-import { Coords, drawCircle, getRelativeAngleFromTime } from "./canvasUtils";
+import {
+  Colours,
+  Coords,
+  drawCircle,
+  getRelativeAngleFromTime,
+} from "./canvasUtils";
 import { AstronomicalDatum } from "../types/astronomical";
 
 // https://codepen.io/anowodzinski/pen/ZWKXPQ
@@ -13,8 +18,8 @@ const drawDisc = (
   ctx.beginPath();
   ctx.arc(moonRadius, moonRadius, moonRadius, 0, 2 * Math.PI, true);
   ctx.closePath();
-  ctx.fillStyle = "#fff";
-  ctx.strokeStyle = "#000";
+  ctx.fillStyle = Colours.WHITE;
+  ctx.strokeStyle = Colours.BLACK;
   ctx.lineWidth = lineWidth;
 
   ctx.fill();
@@ -30,7 +35,7 @@ const drawPhase = (
   ctx.beginPath();
   ctx.arc(moonRadius, moonRadius, moonRadius, -Math.PI / 2, Math.PI / 2, true);
   ctx.closePath();
-  ctx.fillStyle = "#000";
+  ctx.fillStyle = Colours.BLACK;
   ctx.fill();
   if (phase !== 0) {
     ctx.translate(moonRadius, moonRadius);
@@ -46,16 +51,16 @@ const drawPhase = (
       true
     );
     ctx.closePath();
-    ctx.fillStyle = phase > 0 ? "#000" : "#000";
+    ctx.fillStyle = phase > 0 ? Colours.WHITE : Colours.BLACK;
     ctx.fill();
   }
 };
 
 export const drawMoonPhase = (
   ctx: CanvasRenderingContext2D,
-  radius: number,
   now: Date,
-  astronomical: AstronomicalDatum
+  astronomical: AstronomicalDatum,
+  center: Coords
 ) => {
   // Draw the moon in its current phase
   ctx.save();
@@ -69,7 +74,6 @@ export const drawMoonPhase = (
   const moonRadius = 40;
   const lineWidth = 2;
   const offset = lineWidth / 2;
-  const center: Coords = [0, 0];
 
   ctx.translate(...center);
 
@@ -100,10 +104,16 @@ export const drawMoonArc = (
     now
   );
   const moonSet = getRelativeAngleFromTime(new Date(astronomical.moonset), now);
-  ctx.lineWidth = 10;
+
   ctx.lineCap = "round";
   ctx.beginPath();
-  ctx.arc(0, 0, radius * 0.97, moonRise - Math.PI / 2, moonSet - Math.PI / 2);
-  ctx.strokeStyle = "#ddd";
+  ctx.arc(0, 0, radius, moonRise - Math.PI / 2, moonSet - Math.PI / 2);
+
+  ctx.lineWidth = 12;
+  ctx.strokeStyle = Colours.BLACK;
+  ctx.stroke();
+
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = Colours.WHITE;
   ctx.stroke();
 };
