@@ -1,5 +1,5 @@
 import { Canvas, CanvasRenderingContext2D } from "canvas";
-import { drawCircle, drawNowLine } from "./canvasUtils";
+import { drawCircle, drawNowLine, drawRectangle, Colours } from "./canvasUtils";
 import { FilteredData } from "../utils/getData";
 import { drawNightTime } from "./drawNightTime";
 import { drawMoonArc, drawMoonPhase } from "./drawMoon";
@@ -61,4 +61,19 @@ export const draw = (
   ctx.resetTransform();
 
   drawMoonPhase(ctx, radius, now, astronomical);
+
+  // draw squares of each of the colours in the Colour enum
+  // 20px large and all on the right side of the canvas
+  const height = 60;
+  const width = 300;
+  Object.values(Colours).forEach((colour, index) => {
+    drawRectangle(
+      ctx,
+      width,
+      height,
+      [ctx.canvas.width - width, height * index],
+      colour,
+      "fill"
+    );
+  });
 };

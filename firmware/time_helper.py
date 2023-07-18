@@ -52,4 +52,4 @@ def get_time():
 def get_last_half_past_time(hours, minutes):
     if minutes >= 30:
         return [hours, 30]
-    return [(hours - 1) % 24, minutes]
+    return [(hours - 1) % 24, 30]

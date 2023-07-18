@@ -188,8 +188,8 @@ file = ih.file_exists("state.json")
 print(file)
 
 while True:
-    ih.app.update()
     ih.led_warn.on()
+    ih.app.update()
     ih.app.draw()
     ih.led_warn.off()
     ih.sleep(ih.app.UPDATE_INTERVAL)

@@ -68,6 +68,10 @@ def update():
         print(e)
         show_error("Unable to download image")
 
+    global UPDATE_INTERVAL
+    # set update interval so that the updates happen shortly after half past the hour
+    UPDATE_INTERVAL = (30 - current_time[5]) & 60
+
 
 def draw():
     jpeg = jpegdec.JPEG(graphics)

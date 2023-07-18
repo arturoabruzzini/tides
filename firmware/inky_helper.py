@@ -88,6 +88,7 @@ def stop_network_led():
 
 
 def sleep(t):
+    print("Going to sleep for ", t, " minutes")
     # Time to have a little nap until the next update
     rtc.clear_timer_flag()
     rtc.set_timer(t, ttp=rtc.TIMER_TICK_1_OVER_60HZ)
