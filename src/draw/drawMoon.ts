@@ -109,11 +109,11 @@ export const drawMoonArc = (
   ctx.beginPath();
   ctx.arc(0, 0, radius, moonRise - Math.PI / 2, moonSet - Math.PI / 2);
 
-  ctx.lineWidth = 12;
-  ctx.strokeStyle = Colours.BLACK;
-  ctx.stroke();
+  // ctx.lineWidth = 12;
+  // ctx.strokeStyle = Colours.BLACK;
+  // ctx.stroke();
 
-  ctx.lineWidth = 10;
+  ctx.lineWidth = 15;
   ctx.strokeStyle = Colours.WHITE;
   ctx.stroke();
 };

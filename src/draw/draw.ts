@@ -10,11 +10,11 @@ import { drawWeather } from "./drawWeather";
 export const draw = (
   canvas: Canvas,
   ctx: CanvasRenderingContext2D,
-  { weather, tides, seaLevel, astronomical }: FilteredData,
+  { weather, seaLevel, astronomical }: FilteredData,
   now: Date
 ) => {
   //background
-  ctx.fillStyle = Colours.WHITE;
+  ctx.fillStyle = Colours.ORANGE;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // center coords
@@ -27,15 +27,10 @@ export const draw = (
   drawNightTime(ctx, ctx.canvas.width, now, astronomical);
 
   // outer circle
-  // ctx.lineWidth = 1;
-  // drawCircle(ctx, circleRadius + 20, [0, 0], Colours.BLACK, "stroke");
-  // drawCircle(ctx, circleRadius - 20, [0, 0], Colours.BLACK, "stroke");
+  drawCircle(ctx, maxRadius - 20, [0, 0], Colours.ORANGE, "fill");
 
   // draw moon visibility arc
-  drawMoonArc(ctx, maxRadius - 10, now, astronomical);
-
-  // numbers
-  drawClockNumbers(ctx, maxRadius - 40, now);
+  drawMoonArc(ctx, maxRadius - 0, now, astronomical);
 
   // middle dot
   // drawCircle(ctx, radius * 0.1, [0, 0], "#333");
@@ -46,18 +41,8 @@ export const draw = (
   // draw sea level
   drawSeaLevel(ctx, maxRadius, now, seaLevel);
 
-  // draw tides
-  // drawTides(ctx, maxRadius, now, tides);
-
-  // // hands
-  // // minutes
-  // const minutesAngle =
-  //   (now.getMinutes() * Math.PI) / 30 +
-  //   (now.getSeconds() * Math.PI) / (30 * 60);
-  // drawHand(ctx, minutesAngle, maxRadius * 0.7, maxRadius * 0.04);
-  // // seconds
-  // const secondsAngle = (now.getSeconds() * Math.PI) / 30;
-  // drawHand(ctx, secondsAngle, maxRadius * 0.8, maxRadius * 0.01);
+  // numbers
+  drawClockNumbers(ctx, maxRadius - 35, now);
 
   // vertical now line
   drawNowLine(ctx, maxRadius);
@@ -68,16 +53,16 @@ export const draw = (
 
   // draw squares of each of the colours in the Colour enum
   // 20px large and all on the right side of the canvas
-  const height = ctx.canvas.height / Object.values(Colours).length;
-  const width = 40;
-  Object.values(Colours).forEach((colour, index) => {
-    drawRectangle(
-      ctx,
-      width,
-      height,
-      [ctx.canvas.width - width, index * height],
-      colour,
-      "fill"
-    );
-  });
+  // const height = ctx.canvas.height / Object.values(Colours).length;
+  // const width = 40;
+  // Object.values(Colours).forEach((colour, index) => {
+  //   drawRectangle(
+  //     ctx,
+  //     width,
+  //     height,
+  //     [ctx.canvas.width - width, index * height],
+  //     colour,
+  //     "fill"
+  //   );
+  // });
 };

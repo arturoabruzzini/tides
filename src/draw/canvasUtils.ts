@@ -1,6 +1,3 @@
-import { AstronomicalDatum } from "../types/astronomical";
-import { TideDatum } from "../types/tides";
-import { addHoursToDate } from "../utils/getData";
 import { CanvasRenderingContext2D } from "canvas";
 
 // https://www.w3schools.com/graphics/canvas_clock.asp

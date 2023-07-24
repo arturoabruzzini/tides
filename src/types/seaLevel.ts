@@ -8,11 +8,6 @@ export interface SeaLevelDatum {
   time: string;
 }
 
-export enum Type {
-  High = "high",
-  Low = "low",
-}
-
 export interface Meta {
   cost: number;
   dailyQuota: number;

@@ -1,37 +1,19 @@
 import { CanvasRenderingContext2D } from "canvas";
-import { Colours, fillHalfTone, getRelativeAngleFromTime } from "./canvasUtils";
+import { getRelativeAngleFromTime } from "./canvasUtils";
 import { AstronomicalDatum } from "../types/astronomical";
 
-export const fillPizzaSlice = (
+const fillPizzaSlice = (
   ctx: CanvasRenderingContext2D,
   radius: number,
   angle1: number,
   angle2: number,
-  colour: Colours,
-  shadingPercent: number
+  colour: string
 ) => {
-  ctx.save();
-
-  // reset background colour
   ctx.beginPath();
   ctx.moveTo(0, 0);
   ctx.arc(0, 0, radius, angle1 - Math.PI / 2, angle2 - Math.PI / 2);
-  ctx.fillStyle = Colours.WHITE;
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.arc(0, 0, radius, angle1 - Math.PI / 2, angle2 - Math.PI / 2);
-
   ctx.fillStyle = colour;
-  if (shadingPercent >= 100) {
-    ctx.fill();
-  } else {
-    ctx.clip();
-    fillHalfTone(ctx, shadingPercent);
-  }
-
-  ctx.restore();
+  ctx.fill();
 };
 
 export const drawNightTime = (
@@ -61,18 +43,11 @@ export const drawNightTime = (
     getRelativeAngleFromTime(new Date(astronomical.civilDawn), now);
   const sunrise = getRelativeAngleFromTime(new Date(astronomical.sunrise), now);
 
-  fillPizzaSlice(ctx, radius, sunset, sunrise, Colours.BLUE, 25);
+  fillPizzaSlice(ctx, radius, sunset, sunrise, "#0000ff");
   if (civilDusk && civilDawn)
-    fillPizzaSlice(ctx, radius, civilDusk, civilDawn, Colours.BLUE, 50);
+    fillPizzaSlice(ctx, radius, civilDusk, civilDawn, "#0000c0");
   if (nauticalDusk && nauticalDawn)
-    fillPizzaSlice(ctx, radius, nauticalDusk, nauticalDawn, Colours.BLUE, 75);
+    fillPizzaSlice(ctx, radius, nauticalDusk, nauticalDawn, "#000080");
   if (astronomicalDusk && astronomicalDawn)
-    fillPizzaSlice(
-      ctx,
-      radius,
-      astronomicalDusk,
-      astronomicalDawn,
-      Colours.BLUE,
-      100
-    );
+    fillPizzaSlice(ctx, radius, astronomicalDusk, astronomicalDawn, "#000040");
 };

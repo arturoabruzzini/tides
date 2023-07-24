@@ -1,8 +1,9 @@
-import { createCanvas } from "canvas";
+import { Canvas, createCanvas } from "canvas";
 import { draw } from "./draw/draw";
 import fs from "fs";
 import * as dotenv from "dotenv";
 import { addHoursToDate, filterData, getData } from "./utils/getData";
+import RgbQuant from "./utils/rgbquant.js";
 
 dotenv.config();
 
@@ -19,17 +20,23 @@ const getLastHalfPastTime = (now: Date) => {
   return previousHalfPast;
 };
 
+const palette = [
+  [0, 0, 0],
+  [255, 255, 255],
+  [0, 255, 0],
+  [0, 0, 255],
+  [255, 0, 0],
+  [255, 255, 0],
+  [255, 128, 0],
+];
+
 const createTideImages = async () => {
   const data = await getData();
 
   console.log("Got data", {
     weather: {
-      from: data.weatherData.hours[0].time,
-      to: data.weatherData.hours.slice(-1)[0].time,
-    },
-    tides: {
-      from: data.tidesData.data[0].time,
-      to: data.tidesData.data.slice(-1)[0].time,
+      from: data.weatherData.hourly[0].time,
+      to: data.weatherData.hourly.slice(-1)[0].time,
     },
     seaLevel: {
       from: data.seaLevelData.data[0].time,
@@ -37,7 +44,7 @@ const createTideImages = async () => {
     },
     astronomical: {
       from: data.astronomicalData.data[0].time,
-      to: data.weatherData.hours.slice(-1)[0].time,
+      to: data.astronomicalData.data.slice(-1)[0].time,
     },
   });
 
@@ -53,25 +60,58 @@ const createTideImages = async () => {
     fs.mkdirSync("build");
   }
 
-  new Array(24).fill(1).forEach((_, index) => {
-    const time = addHoursToDate(previousHalfPast, index);
+  new Array(process.env.LOCAL === "true" ? 1 : 24)
+    .fill(1)
+    .forEach((_, index) => {
+      const time = addHoursToDate(previousHalfPast, index);
 
-    // format time (e.g. "7:30" or "12:30")
-    const hours = String(time.getHours());
-    const minutes = String(time.getMinutes()).padStart(2, "0");
-    const timeString = `${hours}-${minutes}`;
+      // format time (e.g. "7:30" or "12:30")
+      const hours = String(time.getHours());
+      const minutes = String(time.getMinutes()).padStart(2, "0");
+      const timeString = `${hours}-${minutes}`;
 
-    // loop through the hours
-    const filteredData = filterData(data, time);
+      // loop through the hours
+      const filteredData = filterData(data, time);
 
-    const canvas = createCanvas(800, 480);
-    const ctx = canvas.getContext("2d");
+      // const canvas = createCanvas(800, 480);
+      const canvas = new Canvas(800, 480);
+      const ctx = canvas.getContext("2d");
 
-    draw(canvas, ctx, filteredData, time);
+      draw(canvas, ctx, filteredData, time);
 
-    const fileName = `build/${timeString}.jpg`;
-    fs.writeFileSync(fileName, canvas.toBuffer("image/jpeg"));
-  });
+      fs.writeFileSync(
+        `build/${timeString}_pre_dither.png`,
+        canvas.toBuffer("image/png")
+      );
+
+      // Dither the image
+      const quant = new RgbQuant({
+        palette,
+        dithKern: "FloydSteinberg",
+        // dithKern: "FalseFloydSteinberg",
+        // dithKern: "Stucki",
+        // dithKern: "Atkinson",
+        // dithKern: "Jarvis",
+        // dithKern: "Burkes",
+        // dithKern: "Sierra",
+        // dithKern: "TwoSierra",
+        // dithKern: "SierraLite",
+        dithSerp: true,
+        reIndex: true,
+      });
+
+      const out = quant.reduce(canvas);
+
+      const imageData = ctx.createImageData(canvas.width, canvas.height);
+      imageData.data.set(out!);
+      ctx.putImageData(imageData, 0, 0);
+
+      fs.writeFileSync(
+        `build/${timeString}.jpg`,
+        canvas.toBuffer("image/jpeg")
+      );
+      fs.writeFileSync(`build/${timeString}.png`, canvas.toBuffer("image/png"));
+    });
   console.log("Saved 24 files");
 };
 

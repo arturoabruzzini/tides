@@ -74,7 +74,8 @@ jobs:
         env:
           TZ: "Europe/London"
           STORMGLASS_API_KEY: ${{ secrets.STORMGLASS_API_KEY }}
-          REFETCH_DATA: ${{ github.event_name == 'schedule' || github.event.inputs.refetch-data == 'true' }}
+          REFETCH_STORMGLASS_DATA: ${{ github.event_name == 'schedule' || github.event.inputs.refetch-data == 'true' }}
+          REFETCH_OPENMETEO_DATA: "true"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2

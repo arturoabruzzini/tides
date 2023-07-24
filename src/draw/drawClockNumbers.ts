@@ -16,7 +16,7 @@ export const drawClockNumbers = (
     ctx.rotate(angle);
     ctx.translate(0, -radius);
     ctx.rotate(-angle);
-    ctx.fillStyle = Colours.ORANGE;
+    ctx.fillStyle = Colours.BLACK;
     ctx.fillText(num.toString(), 0, 0);
     // ctx.strokeStyle = Colours.WHITE;
     // ctx.strokeText(num.toString(), 0, 0);

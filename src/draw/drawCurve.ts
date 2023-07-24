@@ -125,8 +125,8 @@ export const drawCurve = (
 export const getCartesianPoint = (
   time: Date,
   value: number,
-  max: number,
   min: number,
+  max: number,
   radius: number,
   now: Date
 ) => {
@@ -155,8 +155,8 @@ export const drawPolarCurve = (
   now: Date,
   data: { [key: string]: any }[],
   valuePath: string,
-  max: number,
   min: number,
+  max: number,
   colour: string,
   lineWidth: number = 2,
   fill: boolean = false
@@ -168,8 +168,8 @@ export const drawPolarCurve = (
     getCartesianPoint(
       new Date(dp.time),
       getValue(dp, valuePath),
-      max,
       min,
+      max,
       radius,
       now
     )

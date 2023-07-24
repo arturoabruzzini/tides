@@ -1,5 +1,4 @@
 import { CanvasRenderingContext2D } from "canvas";
-import { WeatherHour } from "../types/weather";
 import { drawPolarCurve } from "./drawCurve";
 import {
   Colours,
@@ -7,16 +6,21 @@ import {
   point,
   polarToCartesian,
 } from "./canvasUtils";
+import { OpenMeteoHour } from "../types/openmeteo";
 
-export const drawClouds = (
+/*
+Using cloudCover, precipitation
+
+*/
+export const drawSky = (
   ctx: CanvasRenderingContext2D,
   radius: number,
   now: Date,
-  weather: WeatherHour[]
+  weather: OpenMeteoHour[]
 ) => {
   ctx.save();
 
-  weather.forEach(({ time, cloudCover }, index) => {
+  weather.forEach(({ time, cloudcover }, index) => {
     ctx.save();
 
     const angle = getRelativeAngleFromTime(new Date(time), now);
@@ -27,7 +31,7 @@ export const drawClouds = (
 
     ctx.translate(0, -length);
 
-    const numberOfClouds = Math.floor(cloudCover.sg / 20);
+    const numberOfClouds = Math.floor(cloudcover / 20);
     const cloudRadius = 10;
     const xSpread = 35;
     const ySpread = 10;
@@ -54,7 +58,7 @@ export const drawWeather = (
   ctx: CanvasRenderingContext2D,
   radius: number,
   now: Date,
-  weather: WeatherHour[]
+  weather: OpenMeteoHour[]
 ) => {
   // air temp
   // drawPolarCurve(
@@ -67,7 +71,7 @@ export const drawWeather = (
   //   35,
   //   "red"
   // );
-  const airTemperature = weather[0].airTemperature.sg;
+  const airTemperature = weather[0].temperature_2m;
   // icons of recommended clothing
 
   // above 30: speedos
@@ -79,21 +83,21 @@ export const drawWeather = (
   // below 0: ski suit
 
   // clouds: show cloud cover for each hour
-  // drawClouds(ctx, radius, now, weather);
+  // drawSky(ctx, radius, now, weather);
 
   // precipitation: rain icons for each hour
 
   // waveHeight: curve?
-  drawPolarCurve(
-    ctx,
-    radius,
-    now,
-    weather,
-    "waveHeight.sg",
-    0,
-    4,
-    Colours.GREEN
-  );
+  // drawPolarCurve(
+  //   ctx,
+  //   radius,
+  //   now,
+  //   weather,
+  //   "waveHeight.sg",
+  //   0,
+  //   4,
+  //   Colours.GREEN
+  // );
 
   // windDirection: compass arrow
 
