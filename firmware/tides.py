@@ -5,7 +5,7 @@ from ujson import load
 import machine
 import uos
 import sdcard
-import time_helper as th
+import inky_helper as ih
 
 gc.collect()
 
@@ -25,8 +25,13 @@ gc.collect()  # Claw back some RAM!
 
 # Length of time between updates in minutes.
 # Frequent updates will reduce battery life!
-# TODO make the updates at specific times, not just every 60 min from startup
 UPDATE_INTERVAL = 60
+
+
+def get_last_half_past_time(hours, minutes):
+    if minutes >= 30:
+        return [hours, 30]
+    return [(hours - 1) % 24, 30]
 
 
 def show_error(text):
@@ -37,12 +42,12 @@ def show_error(text):
 
 
 def update():
-    current_time = th.get_time()
+    current_time = ih.get_time()
 
     print("Current time", current_time)
 
-    [hours, minutes] = th.get_last_half_past_time(
-        current_time[4], current_time[5])
+    [hours, minutes] = get_last_half_past_time(
+        current_time[3], current_time[4])
 
     URL = f"https://arturoabruzzini.github.io/tides/{hours}-{minutes}.jpg"
 
@@ -68,10 +73,6 @@ def update():
         print(e)
         show_error("Unable to download image")
 
-    global UPDATE_INTERVAL
-    # set update interval so that the updates happen shortly after half past the hour
-    UPDATE_INTERVAL = (30 - current_time[5]) & 60
-
 
 def draw():
     jpeg = jpegdec.JPEG(graphics)
@@ -83,7 +84,7 @@ def draw():
     print("Rendering")
     try:
         jpeg.open_file(FILENAME)
-        jpeg.decode()
+        jpeg.decode(dither=False)
     except OSError:
         graphics.set_pen(4)
         graphics.rectangle(0, (HEIGHT // 2) - 20, WIDTH, 40)
@@ -96,3 +97,7 @@ def draw():
     gc.collect()
     print("Updating display")
     graphics.update()
+
+    global UPDATE_INTERVAL
+    # set update interval so that the updates happen shortly after half past the hour
+    UPDATE_INTERVAL = (30 - ih.get_time()[4]) % 60 or 60

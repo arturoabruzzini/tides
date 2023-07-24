@@ -32,6 +32,17 @@ import json
 import network
 import os
 import ntptime
+import urequests
+
+inky_frame.pcf_to_pico_rtc()
+
+# Set your latitude/longitude here (find yours by right clicking in Google Maps!)
+LAT = 50.817126004137606
+LNG = -0.11892479580643202
+TIMEZONE_URL = "https://timeapi.io/api/TimeZone/coordinate?latitude=" + \
+    str(LAT) + "&longitude=" + str(LNG)
+
+UTC_OFFSET = 0
 
 # Pin setup for VSYS_HOLD needed to sleep and wake.
 HOLD_VSYS_EN_PIN = 2
@@ -89,17 +100,7 @@ def stop_network_led():
 
 def sleep(t):
     print("Going to sleep for ", t, " minutes")
-    # Time to have a little nap until the next update
-    rtc.clear_timer_flag()
-    rtc.set_timer(t, ttp=rtc.TIMER_TICK_1_OVER_60HZ)
-    rtc.enable_timer_interrupt(True)
-
-    # Set the HOLD VSYS pin to an input
-    # this allows the device to go into sleep mode when on battery power.
-    hold_vsys_en_pin.init(Pin.IN)
-
-    # Regular time.sleep for those powering from USB
-    time.sleep(60 * t)
+    inky_frame.sleep_for(t)
 
 
 # Turns off the button LEDs
@@ -112,6 +113,7 @@ def clear_button_leds():
 
 
 def network_connect(SSID, PSK):
+    global UTC_OFFSET
     # Enable the Wireless
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
@@ -132,7 +134,7 @@ def network_connect(SSID, PSK):
         time.sleep(1)
 
     stop_network_led()
-    network_led_pwm.duty_u16(30000)
+    # network_led_pwm.duty_u16(30000)
 
     # Handle connection error. Switches the Warn LED on.
     if wlan.status() != 3:
@@ -143,10 +145,22 @@ def network_connect(SSID, PSK):
 
     # grab the current time from the ntp server and update the Pico RTC
     try:
-        ntptime.settime()
+        inky_frame.set_time()
         print("Time set")
     except OSError:
         print("Unable to contact NTP server")
+
+    try:
+        r = urequests.get(TIMEZONE_URL)
+        # open the json data
+        j = r.json()
+        r.close()
+
+        # parse relevant data from JSON
+        UTC_OFFSET = j["currentUtcOffset"]["seconds"]
+        print("UTC_OFFSET set to", UTC_OFFSET)
+    except OSError:
+        print("Unable to contact timezone api")
 
 
 state = {"run": None}
@@ -189,3 +203,7 @@ def launch_app(app_name):
     app = __import__(app_name)
     print(app)
     update_state(app_name)
+
+
+def get_time():
+    return time.localtime(time.time() + UTC_OFFSET)
