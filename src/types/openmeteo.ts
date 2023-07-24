@@ -8,6 +8,18 @@ export type Units = {
   cloudcover: string;
   visibility: string;
   is_day: string;
+  windspeed_10m: string;
+  winddirection_10m: string;
+};
+
+export type DailyUnits = {
+  time: string;
+  windspeed_10m_max: string;
+  winddirection_10m_dominant: string;
+  temperature_2m_max: string;
+  temperature_2m_min: string;
+  apparent_temperature_max: string;
+  apparent_temperature_min: string;
 };
 
 export type OpenMeteoHour = {
@@ -20,6 +32,18 @@ export type OpenMeteoHour = {
   cloudcover: number;
   visibility: number;
   is_day: number;
+  windspeed_10m: number;
+  winddirection_10m: number;
+};
+
+export type OpenMeteoDay = {
+  time: string;
+  windspeed_10m_max: number;
+  winddirection_10m_dominant: number;
+  temperature_2m_max: number;
+  temperature_2m_min: number;
+  apparent_temperature_max: number;
+  apparent_temperature_min: number;
 };
 
 export type OpenMeteoData = {
@@ -32,6 +56,8 @@ export type OpenMeteoData = {
   elevation: number;
   hourly_units: Units;
   hourly: OpenMeteoHour[];
+  daily_units: DailyUnits;
+  daily: OpenMeteoDay[];
 };
 
 export type OpenMeteoHourlyArrays = {
@@ -44,6 +70,18 @@ export type OpenMeteoHourlyArrays = {
   cloudcover: Array<number>;
   visibility: Array<number>;
   is_day: Array<number>;
+  windspeed_10m: Array<number>;
+  winddirection_10m: Array<number>;
+};
+
+export type OpenMeteoDailyArrays = {
+  time: Array<string>;
+  windspeed_10m_max: Array<number>;
+  winddirection_10m_dominant: Array<number>;
+  temperature_2m_max: Array<number>;
+  temperature_2m_min: Array<number>;
+  apparent_temperature_max: Array<number>;
+  apparent_temperature_min: Array<number>;
 };
 
 export type RawOpenMeteoData = {
@@ -56,4 +94,45 @@ export type RawOpenMeteoData = {
   elevation: number;
   hourly_units: Units;
   hourly: OpenMeteoHourlyArrays;
+  daily_units: DailyUnits;
+  daily: OpenMeteoDailyArrays;
 };
+
+// Marine api types
+
+export interface MarineUnits {
+  time: string;
+  wave_height: string;
+}
+
+export type MarineOpenMeteoHour = {
+  time: string;
+  wave_height: number;
+};
+
+export type MarineOpenMeteoData = {
+  latitude: number;
+  longitude: number;
+  generationtime_ms: number;
+  utc_offset_seconds: number;
+  timezone: string;
+  timezone_abbreviation: string;
+  hourly_units: MarineUnits;
+  hourly: MarineOpenMeteoHour[];
+};
+
+export interface MarineOpenMeteoHourlyArrays {
+  time: string[];
+  wave_height: number[];
+}
+
+export interface RawMarineOpenMeteoData {
+  latitude: number;
+  longitude: number;
+  generationtime_ms: number;
+  utc_offset_seconds: number;
+  timezone: string;
+  timezone_abbreviation: string;
+  hourly_units: MarineUnits;
+  hourly: MarineOpenMeteoHourlyArrays;
+}

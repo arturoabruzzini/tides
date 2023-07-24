@@ -38,6 +38,10 @@ const createTideImages = async () => {
       from: data.weatherData.hourly[0].time,
       to: data.weatherData.hourly.slice(-1)[0].time,
     },
+    marine: {
+      from: data.marineData.hourly[0].time,
+      to: data.marineData.hourly.slice(-1)[0].time,
+    },
     seaLevel: {
       from: data.seaLevelData.data[0].time,
       to: data.seaLevelData.data.slice(-1)[0].time,

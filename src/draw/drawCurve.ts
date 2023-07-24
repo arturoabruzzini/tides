@@ -188,7 +188,7 @@ export const drawPolarCurve = (
   ctx.strokeStyle = colour;
   ctx.fillStyle = colour;
   drawCurve(ctx, points.flat(), {
-    // isClosed: true,
+    isClosed: fill,
     // showPoints: true,
   });
 

@@ -6,11 +6,12 @@ import { drawMoonArc, drawMoonPhase } from "./drawMoon";
 import { drawClockNumbers } from "./drawClockNumbers";
 import { drawSeaLevel } from "./drawSeaLevel";
 import { drawWeather } from "./drawWeather";
+import { drawMarine } from "./drawMarine";
 
 export const draw = (
   canvas: Canvas,
   ctx: CanvasRenderingContext2D,
-  { weather, seaLevel, astronomical }: FilteredData,
+  { weather, weatherDay, marine, seaLevel, astronomical }: FilteredData,
   now: Date
 ) => {
   //background
@@ -36,7 +37,10 @@ export const draw = (
   // drawCircle(ctx, radius * 0.1, [0, 0], "#333");
 
   // draw weather
-  drawWeather(ctx, maxRadius, now, weather);
+  drawWeather(ctx, maxRadius, now, weather, weatherDay);
+
+  // draw weather
+  drawMarine(ctx, maxRadius, now, marine);
 
   // draw sea level
   drawSeaLevel(ctx, maxRadius, now, seaLevel);

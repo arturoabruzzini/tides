@@ -4,18 +4,25 @@ import { AstronomicalData, AstronomicalDatum } from "../types/astronomical";
 import {
   OpenMeteoData,
   OpenMeteoHour,
+  MarineOpenMeteoData,
+  RawMarineOpenMeteoData,
   RawOpenMeteoData,
+  MarineOpenMeteoHour,
+  OpenMeteoDay,
 } from "../types/openmeteo";
 import { SeaLevelData, SeaLevelDatum } from "../types/seaLevel";
 
 export interface RawData {
   weatherData: OpenMeteoData;
+  marineData: MarineOpenMeteoData;
   seaLevelData: SeaLevelData;
   astronomicalData: AstronomicalData;
 }
 
 export interface FilteredData {
   weather: OpenMeteoHour[];
+  weatherDay: OpenMeteoDay;
+  marine: MarineOpenMeteoHour[];
   seaLevel: SeaLevelDatum[];
   astronomical: AstronomicalDatum;
 }
@@ -27,7 +34,7 @@ export const addHoursToDate = (date: Date, hours: number) =>
   new Date(date.getTime() + hours * 60 * 60 * 1000);
 
 export const filterData = (
-  { weatherData, seaLevelData, astronomicalData }: RawData,
+  { weatherData, marineData, seaLevelData, astronomicalData }: RawData,
   time: Date
 ): FilteredData => {
   const now = time;
@@ -40,6 +47,24 @@ export const filterData = (
   if (weather.length !== 24) {
     throw new Error(
       `can't find the next 24 hours of weather, only got ${weather.length}`
+    );
+  }
+
+  // for daily weather figures, get current day until 11pm, then next day
+  const weatherDay = weatherData.daily.find((d) => {
+    return isDateBetween(new Date(`${d.time}T23:00:00`), now, in24Hours);
+  });
+  if (!weatherDay) {
+    throw new Error("can't find the next weather day");
+  }
+
+  // for marine get the next 24 hours of marine
+  const marine: MarineOpenMeteoHour[] = marineData.hourly.filter((h) =>
+    isDateBetween(new Date(h.time), now, in24Hours)
+  );
+  if (marine.length !== 24) {
+    throw new Error(
+      `can't find the next 24 hours of marine, only got ${marine.length}`
     );
   }
 
@@ -72,6 +97,8 @@ export const filterData = (
 
   return {
     weather,
+    weatherDay,
+    marine,
     seaLevel,
     astronomical,
   };
@@ -80,6 +107,9 @@ export const filterData = (
 const getDataFromCache = () => {
   const weatherData: OpenMeteoData = JSON.parse(
     fs.readFileSync("data/openmeteo.json", "utf-8")
+  );
+  const marineData: MarineOpenMeteoData = JSON.parse(
+    fs.readFileSync("data/marineOpenmeteo.json", "utf-8")
   );
   const seaLevelData: SeaLevelData = JSON.parse(
     fs.readFileSync("data/seaLevel.json", "utf-8")
@@ -90,6 +120,7 @@ const getDataFromCache = () => {
 
   return {
     weatherData,
+    marineData,
     seaLevelData,
     astronomicalData,
   };
@@ -116,7 +147,9 @@ const fetchOpenMeteoData = async () => {
         latitude: lat,
         longitude: lng,
         hourly:
-          "temperature_2m,apparent_temperature,precipitation_probability,precipitation,weathercode,cloudcover,visibility,is_day",
+          "temperature_2m,apparent_temperature,precipitation_probability,precipitation,weathercode,cloudcover,visibility,is_day,windspeed_10m,winddirection_10m",
+        daily:
+          "windspeed_10m_max,winddirection_10m_dominant,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min",
         windspeed_unit: "kn",
         timezone: "Europe/London",
         forecast_days: "3",
@@ -137,14 +170,63 @@ const fetchOpenMeteoData = async () => {
         cloudcover: rawOpenMeteoData.hourly.cloudcover[i],
         visibility: rawOpenMeteoData.hourly.visibility[i],
         is_day: rawOpenMeteoData.hourly.is_day[i],
+        windspeed_10m: rawOpenMeteoData.hourly.windspeed_10m[i],
+        winddirection_10m: rawOpenMeteoData.hourly.winddirection_10m[i],
       });
       return acc;
     }, [] as OpenMeteoHour[]),
+    daily: rawOpenMeteoData.daily.time.reduce((acc, _, i) => {
+      acc.push({
+        time: rawOpenMeteoData.daily.time[i],
+        windspeed_10m_max: rawOpenMeteoData.daily.windspeed_10m_max[i],
+        winddirection_10m_dominant:
+          rawOpenMeteoData.daily.winddirection_10m_dominant[i],
+        temperature_2m_max: rawOpenMeteoData.daily.temperature_2m_max[i],
+        temperature_2m_min: rawOpenMeteoData.daily.temperature_2m_min[i],
+        apparent_temperature_max:
+          rawOpenMeteoData.daily.apparent_temperature_max[i],
+        apparent_temperature_min:
+          rawOpenMeteoData.daily.apparent_temperature_min[i],
+      });
+      return acc;
+    }, [] as OpenMeteoDay[]),
   };
 
   fs.writeFileSync(
     "data/openmeteo.json",
     JSON.stringify(openMeteoData, null, 2)
+  );
+
+  const marineInstance = axios.create({
+    baseURL: "https://marine-api.open-meteo.com/v1",
+  });
+
+  if (!fs.existsSync("data")) {
+    fs.mkdirSync("data");
+  }
+
+  const { data: rawMarineOpenMeteoData } =
+    await marineInstance.get<RawMarineOpenMeteoData>("/marine", {
+      params: {
+        latitude: lat,
+        longitude: lng,
+        hourly: "wave_height",
+      },
+    });
+  const marineOpenMeteoData: MarineOpenMeteoData = {
+    ...rawMarineOpenMeteoData,
+    hourly: rawMarineOpenMeteoData.hourly.time.reduce((acc, _, i) => {
+      acc.push({
+        time: rawMarineOpenMeteoData.hourly.time[i],
+        wave_height: rawMarineOpenMeteoData.hourly.wave_height[i],
+      });
+      return acc;
+    }, [] as MarineOpenMeteoHour[]),
+  };
+
+  fs.writeFileSync(
+    "data/marineOpenmeteo.json",
+    JSON.stringify(marineOpenMeteoData, null, 2)
   );
 };
 
