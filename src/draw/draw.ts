@@ -31,15 +31,12 @@ export const draw = (
   drawCircle(ctx, maxRadius - 20, [0, 0], Colours.ORANGE, "fill");
 
   // draw moon visibility arc
-  drawMoonArc(ctx, maxRadius - 0, now, astronomical);
-
-  // middle dot
-  // drawCircle(ctx, radius * 0.1, [0, 0], "#333");
+  drawMoonArc(ctx, maxRadius - 3, now, astronomical);
 
   // draw weather
   drawWeather(ctx, maxRadius, now, weather, weatherDay);
 
-  // draw weather
+  // draw waves
   drawMarine(ctx, maxRadius, now, marine);
 
   // draw sea level

@@ -10,5 +10,5 @@ export const drawMarine = (
   marine: MarineOpenMeteoHour[]
 ) => {
   // waveHeight: curve
-  drawPolarCurve(ctx, radius, now, marine, "wave_height", 0, 4, Colours.BLUE);
+  drawPolarCurve(ctx, radius, now, marine, "wave_height", 0, 4, Colours.GREEN);
 };

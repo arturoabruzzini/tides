@@ -84,6 +84,11 @@ const createTideImages = async () => {
       draw(canvas, ctx, filteredData, time);
 
       fs.writeFileSync(
+        `build/${timeString}_pre_dither.jpg`,
+        canvas.toBuffer("image/jpeg")
+      );
+
+      fs.writeFileSync(
         `build/${timeString}_pre_dither.png`,
         canvas.toBuffer("image/png")
       );

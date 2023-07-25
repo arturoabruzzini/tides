@@ -106,3 +106,17 @@ export const fillHalfTone = (
     }
   }
 };
+
+export const fillPizzaSlice = (
+  ctx: CanvasRenderingContext2D,
+  radius: number,
+  angle1: number,
+  angle2: number,
+  colour: string
+) => {
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.arc(0, 0, radius, angle1 - Math.PI / 2, angle2 - Math.PI / 2);
+  ctx.fillStyle = colour;
+  ctx.fill();
+};
