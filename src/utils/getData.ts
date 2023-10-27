@@ -44,7 +44,7 @@ export const filterData = (
   const weather: OpenMeteoHour[] = weatherData.hourly.filter((h) =>
     isDateBetween(new Date(h.time), now, in24Hours)
   );
-  if (weather.length !== 24) {
+  if (weather.length < 23) {
     throw new Error(
       `can't find the next 24 hours of weather, only got ${weather.length}`
     );
@@ -62,7 +62,7 @@ export const filterData = (
   const marine: MarineOpenMeteoHour[] = marineData.hourly.filter((h) =>
     isDateBetween(new Date(h.time), now, in24Hours)
   );
-  if (marine.length !== 24) {
+  if (marine.length < 23) {
     throw new Error(
       `can't find the next 24 hours of marine, only got ${marine.length}`
     );
@@ -79,7 +79,7 @@ export const filterData = (
     seaLevelIndexOfFirst - 1,
     seaLevelIndexOfLast + 1
   );
-  if (seaLevel.length !== 26) {
+  if (seaLevel.length < 25) {
     throw new Error(
       `can't find the 26 hours of sea level, only got ${seaLevel.length}`
     );
