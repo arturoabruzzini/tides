@@ -87,7 +87,7 @@ export const filterData = (
 
   // for astronomical get today's entry
   const astronomical = astronomicalData.data.find(
-    (d) => d.time === now.toISOString().replace(/T.*/, "T12:00:00+00:00")
+    (d) => d.time === now.toISOString().replace(/T.*/, "T00:00:00+00:00")
   );
 
   if (!astronomical) {

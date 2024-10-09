@@ -36,6 +36,13 @@ export const drawWeather = (
   drawRecommendedClothing(ctx, airTemperature);
 };
 
+/**
+ * icons from
+ * https://www.svgrepo.com/collection/man-clothes-4/2
+ * https://www.svgrepo.com/collection/winter/
+ * using
+ * https://demo.qunee.com/svg2canvas/
+ */
 const drawSunny = (ctx: CanvasRenderingContext2D, rays = 5) => {
   const totalAngle = Math.PI / 12;
   const maxLength = ctx.canvas.width;

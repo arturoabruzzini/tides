@@ -132,3 +132,7 @@ dist
 # custom
 build/
 data/
+
+.DS_Store
+
+*.stl
